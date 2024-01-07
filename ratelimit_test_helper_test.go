@@ -3,10 +3,11 @@ package ratelimiter
 import (
 	"context"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func forEach(trialCount int, f func(i int)) {

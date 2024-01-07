@@ -48,7 +48,7 @@ func TestLeakyBucketRateLimiter_Run(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		t.Run("passed only for the queue size without affecting flow batch size", func(t *testing.T) {
-			multipleTest(100, func() {
+			forEach(100, func(_ int) {
 				for flowBatchSize := 1; flowBatchSize < 5; flowBatchSize++ {
 					rateLimiter := NewLeakyBucketRateLimiter(5, flowBatchSize, 100*time.Microsecond)
 					expect := executionCount{
@@ -71,7 +71,7 @@ func TestLeakyBucketRateLimiter_Run(t *testing.T) {
 		})
 
 		t.Run("even if flow batch size is larger than queue size, processed as queue size limit", func(t *testing.T) {
-			multipleTest(100, func() {
+			forEach(100, func(_ int) {
 				rateLimiter := NewLeakyBucketRateLimiter(5, 100, 100*time.Microsecond)
 				expect := executionCount{
 					runCount:   5 + 5 + 5,

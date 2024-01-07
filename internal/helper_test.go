@@ -3,10 +3,11 @@ package internal
 import (
 	"context"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func datetime(year, month, day, hour, min, sec int) time.Time {

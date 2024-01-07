@@ -41,8 +41,8 @@ func TestNewStaticWindowLogRateLimiter(t *testing.T) {
 	}
 
 	runAndReload := func(rateLimiter RateLimiter, parallelCount int, actual *executionCount) {
-		runParallel(rateLimiter, parallelCount, actual)                                     // all passed
-		err := waitReceivedChannel(rateLimiter.(*TokenBucketRateLimiter).reloadCompletedCh) // wait for reloading to bucket
+		runParallel(rateLimiter, parallelCount, actual)
+		err := waitReceivedChannel(rateLimiter.(*TokenBucketRateLimiter).reloadCompletedCh, 5*time.Second) // wait for reloading to bucket
 		require.NoErrorf(t, err, "failed to reload count")
 	}
 
@@ -57,7 +57,7 @@ func TestNewStaticWindowLogRateLimiter(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		t.Run("concurrent access is exceeded without reload count", func(t *testing.T) {
-			multipleTest(100, func() {
+			forEach(100, func(_ int) {
 				rateLimiter := NewStaticWindowCounterRateLimiter(100, time.Second)
 				expect := executionCount{
 					runCount:   100,
@@ -76,7 +76,7 @@ func TestNewStaticWindowLogRateLimiter(t *testing.T) {
 		})
 
 		t.Run("reload test", func(t *testing.T) {
-			multipleTest(100, func() {
+			forEach(100, func(_ int) {
 				reloadCycle := 1 * time.Millisecond
 				rateLimiter := NewStaticWindowCounterRateLimiter(100, reloadCycle)
 				expect := executionCount{
@@ -99,7 +99,7 @@ func TestNewStaticWindowLogRateLimiter(t *testing.T) {
 		})
 
 		t.Run("the reload count exceed bucket size", func(t *testing.T) {
-			multipleTest(100, func() {
+			forEach(100, func(_ int) {
 				reloadCycle := time.Millisecond
 				rateLimiter := NewStaticWindowCounterRateLimiter(10, reloadCycle)
 				expect := executionCount{
